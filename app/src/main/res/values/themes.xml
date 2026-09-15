@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Accord" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Accord" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/background_violet</item>
+        <item name="android:statusBarColor">@color/background_violet</item>
+        <item name="android:navigationBarColor">@color/background_violet</item>
+        <item name="colorPrimary">@color/primary_purple</item>
+        <item name="colorAccent">@color/accent_lavender</item>
+    </style>
 </resources>
