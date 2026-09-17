@@ -23,14 +23,17 @@ object BottomNavHelper {
             activity.findViewById<View>(item.viewId).apply {
                 isSelected = item.viewId == selectedItemId
                 setOnClickListener {
-                    if (item.viewId != selectedItemId) {
-                        activity.startActivity(Intent(activity, item.destination))
-                        activity.overridePendingTransition(0, 0)
-                        activity.finish()
-                        activity.overridePendingTransition(0, 0)
-                    }
+                    navigateTo(activity, item.destination)
                 }
             }
         }
+    }
+
+    fun navigateTo(activity: AppCompatActivity, destination: Class<out AppCompatActivity>) {
+        if (activity::class.java == destination) return
+        activity.startActivity(Intent(activity, destination))
+        activity.overridePendingTransition(0, 0)
+        activity.finish()
+        activity.overridePendingTransition(0, 0)
     }
 }

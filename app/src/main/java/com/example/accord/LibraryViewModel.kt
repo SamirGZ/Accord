@@ -43,7 +43,7 @@ class LibraryViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val perfumes = fetchAllPerfumes()
+                val perfumes = PerfumeRepository.fetchAllPerfumes()
                 _uiState.update {
                     it.copy(isLoading = false, perfumes = perfumes, errorMessage = null)
                 }
@@ -60,22 +60,6 @@ class LibraryViewModel : ViewModel() {
 
     fun selectFilter(filter: ScentFilter) {
         _uiState.update { it.copy(selectedFilter = filter) }
-    }
-
-    private suspend fun fetchAllPerfumes(): List<Perfume> {
-        val all = mutableListOf<Perfume>()
-        var offset = 0
-        val pageSize = 50
-        var total = Int.MAX_VALUE
-
-        while (offset < total) {
-            val page = RetrofitInstance.api.getPerfumes(limit = pageSize, offset = offset)
-            total = page.total
-            if (page.perfumes.isEmpty()) break
-            all += page.perfumes
-            offset += page.perfumes.size
-        }
-        return all
     }
 }
 
@@ -104,11 +88,6 @@ private val filterKeywords = mapOf(
 fun Perfume.matchesFilter(filter: ScentFilter): Boolean {
     if (filter == ScentFilter.ALL) return true
     val keywords = filterKeywords[filter] ?: return false
-    val haystack = buildString {
-        notes_top.forEach { append(it).append(' ') }
-        notes_middle.forEach { append(it).append(' ') }
-        notes_base.forEach { append(it).append(' ') }
-        description?.let { append(it) }
-    }.lowercase()
+    val haystack = scentText()
     return keywords.any { haystack.contains(it) }
 }
